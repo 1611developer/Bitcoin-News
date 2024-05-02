@@ -1,1 +1,1 @@
-# Bitcoin-News-API
+# Bitcoin-News
