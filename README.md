@@ -1,1 +1,1 @@
-# Latest-Crypto-News
+# Only the Latest Crypto News API
