@@ -6,12 +6,12 @@ const app = express();
 const PORT = 8000;
 const baseUrl = 'https://news.google.com/search?q=';
 
-app.get('/news/:crypto', (req, res) => {
-  const crypto = req.params.crypto.toLowerCase();
+app.get('/news/:topic', (req, res) => {
+  const topic = req.params.topic.toLowerCase();
 
-  // Construct URL based on requested cryptocurrency
+  // Construct URL based on requested topic
   const urls = [
-    `${baseUrl}${encodeURIComponent(crypto)}`
+    `${baseUrl}${encodeURIComponent(topic)}`
   ];
 
   // Map each URL to an axios GET call
@@ -40,8 +40,8 @@ app.get('/news/:crypto', (req, res) => {
             title = title.substring(moreIndex + 4).trim();
           }
 
-          // Check if the title contains the chosen cryptocurrency
-          if (title.toLowerCase().includes(crypto)) {
+          // Check if the title contains the chosen topic
+          if (title.toLowerCase().includes(topic)) {
             if (timeSelector) {
               const timeAgo = $(this).find(timeSelector).text().trim();
               const hoursAgoMatch = timeAgo.match(/\d+\s*hour(s)?\s+ago/i);
@@ -62,11 +62,12 @@ app.get('/news/:crypto', (req, res) => {
         });
       });
 
-      // Filter articles older than 24 hours
-      const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
+      // Filter articles newer than 23 hours and 59 minutes
+      const currentTime = Date.now();
+      const twentyThreeHoursFiftyNineMinutesAgo = currentTime - 23 * 60 * 60 * 1000 - 59 * 60 * 1000;
       const filteredArticles = articles.filter(article => {
         const time = parsePublishedTime(article.published);
-        return time >= twentyFourHoursAgo;
+        return time >= twentyThreeHoursFiftyNineMinutesAgo;
       });
 
       // Sort filtered articles by published time (newest to oldest)
@@ -88,7 +89,15 @@ function parsePublishedTime(published) {
   const hoursAgoMatch = published.match(/(\d+)\s*hour(s)?\s+ago/i);
   if (hoursAgoMatch) {
     const hours = parseInt(hoursAgoMatch[1]);
-    return Date.now() - hours * 60 * 60 * 1000;
+    const currentTime = Date.now();
+    const twentyFourHoursAgo = currentTime - 24 * 60 * 60 * 1000;
+    const twentyThreeHoursFiftyNineMinutesAgo = currentTime - 23 * 60 * 60 * 1000 - 59 * 60 * 1000;
+
+    if (twentyThreeHoursFiftyNineMinutesAgo <= twentyFourHoursAgo) {
+      return new Date(currentTime).toLocaleDateString();
+    }
+
+    return currentTime - hours * 60 * 60 * 1000;
   }
   return 0;
 }
