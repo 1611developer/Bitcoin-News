@@ -1,1 +1,1 @@
-# Bitcoin-News
+# Latest-Crypto-News
