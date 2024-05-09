@@ -24,7 +24,7 @@ app.get('/news/:topic', (req, res) => {
   // Construct URL based on requested topic.
   const urls = [
 
-    // Create the URL by appending the encoded topic to the base URL
+    // Create the URL by appending the encoded topic to the base URL.
     `${baseUrl}${encodeURIComponent(topic)}`
   ];
 
